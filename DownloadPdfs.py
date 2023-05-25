@@ -36,12 +36,13 @@ for count, link in enumerate(test_links):
         with open(pdfs_directory + "/paper" + str(count) + ".txt", "wb") as file:
             #print(r.content)
 
-            link = "https://ieeexplore.ieee.org/iel5/6635/17694/00816042.pdf"
+            link = "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=816042"
             
             #pdf = requests.get(link, cookies=cookies, headers=headers, timeout=3).content
 
             chrome_options = webdriver.ChromeOptions()
             chrome_options.add_experimental_option('prefs', {
+                "plugins.plugins_list": [{"enabled": False, "name": "Chrome PDF Viewer"}],
                 "download.default_directory": pdfs_directory, 
                 "download.prompt_for_download": False,
                 "download.directory_upgrade": True,
