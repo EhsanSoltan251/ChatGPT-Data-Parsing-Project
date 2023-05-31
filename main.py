@@ -11,11 +11,10 @@ from os.path import isfile, join
 pdfs_directory = os.path.dirname(os.path.abspath(__file__)) + "/pdfs"
 pdf_paths = [pdfs_directory + "/" + file for file in listdir(pdfs_directory) if  file[-4:] == ".pdf" and isfile(join(pdfs_directory, file))]
 
-openai.api_key = "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"
+openai.api_key = "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"
 
-prompt = """if the following paper contains any information about radiation effects data for any electronic device(s), 
-then please list the device and include a brief summary about the effect. if there is no specific information about
-radiation effects for a specific device, then simply output *
+prompt = """i want you to output a JSON file. each key will be the name of a specific electronic device
+and, the value of which will be the corresponding effect of radiation on that specific device.
 
 """
 
@@ -29,6 +28,7 @@ def pdfToString(path):
 
                 for page in pdf.pages:
                     text += page.extract_text()
+                    
         return text
 
 def gptInput(input):
@@ -40,7 +40,9 @@ def gptInput(input):
 
 results = []
 for path in pdf_paths:
-       full_prompt = prompt + pdfToString(path)[0:3000]
+       paper = pdfToString(path)
+       paper = paper[5500:8500]
+       full_prompt = prompt + paper
        results.append(gptInput(full_prompt))
        
 print(results)
