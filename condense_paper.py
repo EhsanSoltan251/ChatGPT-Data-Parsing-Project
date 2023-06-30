@@ -13,6 +13,10 @@ pdf_paths = [pdfs_directory + "/" + file for file in listdir(pdfs_directory) if 
 
 openai.api_key = "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"
 
+simplify_prompt = '''
+    Please drastically simplify this passage while keeping as much quantitative information as possible
+'''
+
 prompts = [
        '''What devices were tested in this paper? Please give the items and a summary for each''',
        '''Can you briefly summarize the single event effect testing that was done and the
@@ -47,29 +51,21 @@ def gptInput(input):
        return gpt.choices[0].message.content
 
 results = []
-headings = []
 for path_index, path in enumerate(pdf_paths):
        paper = pdfToString(path)
 
        results.append([])
        for prompt in prompts[0:1]:
-              full_prompt = prompt + paper
-              #results.append(gptInput(full_prompt))
-
-
-              step = int(len(paper) / 4)
+              full_prompt = simplify_prompt + paper
+              chunk = int(len(paper) / 3)
               full_reply = ""
-              for i in range(4):
-                     paper_subsection = paper[i * step : i * step + step]
+              for i in range(3):
+                     paper_subsection = paper[i * chunk : i * chunk + chunk]
                      full_prompt = prompt + paper_subsection
-                     
-                     #full_heading_prompt = heading_prompt + paper_subsection
-                     #print(paper_subsection)
-                     #headings.append(gptInput(full_heading_prompt))
-
                      full_reply += gptInput(full_prompt + " ")
-              remove_redundant = gptInput("Please remove all duplicate information from the following passage: " + full_reply)
-              results[path_index].append(remove_redundant)
+
+              #remove_redundant = gptInput("Please remove all duplicate information from the following passage: " + full_reply)
+              #results[path_index].append(remove_redundant)
        
        
-print(results)
+print(full_reply)
